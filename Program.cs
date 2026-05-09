@@ -1,6 +1,7 @@
 
 using AuthECAPI.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace AuthECAPI
 {
@@ -26,9 +27,13 @@ namespace AuthECAPI
                                                         //You can also create a custom user class that inherits from IdentityUser
                                                         //if you need to add additional properties specific to your application.
             .AddEntityFrameworkStores<ApplicationDbContext>(); //This is responsible for adding the stores for Identity API Core
-                                                                //The ApplicationDbContext is the database context that will be used to store the identity data.
-                                                                //You need to create this class and configure it to use your database provider (e.g., SQL Server, SQLite, etc.)
-                                                                //It should inherit from IdentityDbContext<IdentityUser> or a custom user class if you created one.
+                                                               //The ApplicationDbContext is the database context that will be used to store the identity data.
+                                                               //You need to create this class and configure it to use your database provider (e.g., SQL Server, SQLite, etc.)
+                                                               //It should inherit from IdentityDbContext<IdentityUser> or a custom user class if you created one.
+
+            //Adding the database context to the services container
+            builder.Services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DevDB")));
 
             var app = builder.Build();
 
