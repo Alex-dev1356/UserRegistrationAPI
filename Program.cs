@@ -79,7 +79,8 @@ namespace AuthECAPI
             {
                 //Creating a new user object and populating it with the data from the request body
                 AppUser user = new AppUser()
-                { 
+                {
+                    UserName = userRegistrationModel.Email, //Setting the UserName property to the email address of the user
                     Email = userRegistrationModel.Email,
                     FullName = userRegistrationModel.FullName
                 };
