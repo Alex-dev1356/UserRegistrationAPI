@@ -1,7 +1,9 @@
 
 using AuthECAPI.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Client;
 
 namespace AuthECAPI
 {
@@ -54,12 +56,45 @@ namespace AuthECAPI
             app
                 .MapGroup("/api") //This is responsible for grouping the endpoints for Identity API Core under the "/api" route
                 .MapIdentityApi<AppUser>(); //This is responsible for mapping the endpoints for Identity API Core
-                                                //The IdentityUser is the default user class provided by ASP.NET Core Identity.
-                                                //It includes properties like UserName, Email, PasswordHash, etc.
-                                                //You can also create a custom user class that inherits from IdentityUser
-                                                //if you need to add additional properties specific to your application.
+                                            //The IdentityUser is the default user class provided by ASP.NET Core Identity.
+                                            //It includes properties like UserName, Email, PasswordHash, etc.
+                                            //You can also create a custom user class that inherits from IdentityUser
+                                            //if you need to add additional properties specific to your application.
+
+            //Using Minimal API Controllers for Identity API Core
+            app.MapPost("/api/signup", async(
+                UserManager<AppUser> userManager, //This is responsible for managing the users in Identity API Core
+                [FromBody] UserRegistrationModel userRegistrationModel //This is responsible for binding the data from the request body to the UserRegistrationModel class
+                ) => 
+            {
+                //Creating a new user object and populating it with the data from the request body
+                AppUser user = new AppUser()
+                { 
+                    Email = userRegistrationModel.Email,
+                    FullName = userRegistrationModel.FullName
+                };
+                //The UserManager class provides various methods for managing users, such as creating, updating, deleting, etc.
+                var result = await userManager.CreateAsync(
+                    user, 
+                    userRegistrationModel.Password); //This is responsible for creating a new user in Identity API Core
+                                                     //The CreateAsync method takes the user object and the password as parameters and creates a new user in the database.
+                                                     //It returns a Task<IdentityResult> which indicates whether the operation was successful or not.
+                                                     //You can also handle the result of the operation to return appropriate responses to the client.
+
+                //returning the result of the operation to the client
+                if (result.Succeeded)
+                {
+                    return Results.Ok(result);
+                }
+                else
+                {
+                    return Results.BadRequest(result.Errors);
+                }
+            });
+
 
             app.Run();
+        
         }
     }
 }
