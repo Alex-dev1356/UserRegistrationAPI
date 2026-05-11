@@ -33,6 +33,16 @@ namespace AuthECAPI
                                                                //You need to create this class and configure it to use your database provider (e.g., SQL Server, SQLite, etc.)
                                                                //It should inherit from IdentityDbContext<IdentityUser> or a custom user class if you created one.
 
+            //This is responsible for configuring different options for Identity API Core
+            builder.Services.Configure<IdentityOptions>(options => 
+                {
+                    options.Password.RequireDigit = false; //This is responsible for making sure that the password does not require a digit in Identity API Core
+                    options.Password.RequireLowercase = false; //This is responsible for making sure that the password does not require a lowercase letter in Identity API Core
+                    options.Password.RequireUppercase = false; //This is responsible for making sure that the password does not require an uppercase letter in Identity API Core
+                    options.Password.RequireNonAlphanumeric = false; //This is responsible for making sure that the password does not require a non-alphanumeric character in Identity API Core
+                    options.User.RequireUniqueEmail = true; //This is responsible for making sure that each user has a unique email address in Identity API Core
+                });
+
             //Adding the database context to the services container
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DevDB")));
