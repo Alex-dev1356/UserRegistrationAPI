@@ -21,7 +21,7 @@ namespace AuthECAPI
             //Adding Services from Identity Core
             //For Identity Manager
             builder.Services
-                .AddIdentityApiEndpoints<IdentityUser>()//This is responsible for adding the endpoints for Identity API Core
+                .AddIdentityApiEndpoints<AppUser>()//This is responsible for adding the endpoints for Identity API Core
                                                         //The IdentityUser is the default user class provided by ASP.NET Core Identity.
                                                         //It includes properties like UserName, Email, PasswordHash, etc.
                                                         //You can also create a custom user class that inherits from IdentityUser
@@ -53,7 +53,7 @@ namespace AuthECAPI
             //Adding the respective Routes for Identity API Core
             app
                 .MapGroup("/api") //This is responsible for grouping the endpoints for Identity API Core under the "/api" route
-                .MapIdentityApi<IdentityUser>(); //This is responsible for mapping the endpoints for Identity API Core
+                .MapIdentityApi<AppUser>(); //This is responsible for mapping the endpoints for Identity API Core
                                                 //The IdentityUser is the default user class provided by ASP.NET Core Identity.
                                                 //It includes properties like UserName, Email, PasswordHash, etc.
                                                 //You can also create a custom user class that inherits from IdentityUser
