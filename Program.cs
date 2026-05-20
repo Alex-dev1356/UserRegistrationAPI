@@ -58,6 +58,14 @@ namespace AuthECAPI
 
             app.UseHttpsRedirection();
 
+            //Adding the CORS policy to allow requests from the frontend application
+            #region Config. CORS
+            app.UseCors(options => 
+                options.WithOrigins("http://localhost:4200")
+                .AllowAnyMethod()
+                .AllowAnyHeader());
+            #endregion
+
             app.UseAuthorization();
 
             app.MapControllers();
