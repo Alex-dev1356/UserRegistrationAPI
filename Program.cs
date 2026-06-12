@@ -47,6 +47,10 @@ namespace AuthECAPI
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DevDB")));
 
+            //With this, we will add the necessary services to the app and configured how we want to authenticate users in our application
+            //and such logic will be executed by adding the UseAuthentication() in the middleware pipeline.
+            builder.Services.AddAuthentication();
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -65,6 +69,10 @@ namespace AuthECAPI
                 .AllowAnyMethod()
                 .AllowAnyHeader());
             #endregion
+
+            //This is responsible for adding the authentication middleware to the HTTP request pipeline.
+            //It should be added before the authorization middleware.
+            app.UseAuthentication(); 
 
             app.UseAuthorization();
 
