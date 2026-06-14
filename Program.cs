@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace AuthECAPI
 {
@@ -59,6 +61,16 @@ namespace AuthECAPI
                     }).AddJwtBearer(y =>
                     {
                         y.SaveToken = false; //This is responsible for not saving the token in the HttpContext after a successful authentication in Identity API Core
+                        y.TokenValidationParameters = new TokenValidationParameters
+                        { 
+                            ValidateIssuerSigningKey = true, //This is responsible for validating the signing key of the token in Identity API Core
+                            IssuerSigningKey = new SymmetricSecurityKey(
+                                Encoding.UTF8.GetBytes( //This is responsible for creating a new symmetric security key using the secret key defined in the appsettings.json file in Identity API Core
+                                    builder.Configuration["AppSettings:JWTSecret"]!) //This is responsible for getting the secret key from the appsettings.json file using the Configuration object in Identity API Core
+                                ) 
+                                    
+                        };
+
                     });
 
             var app = builder.Build();
