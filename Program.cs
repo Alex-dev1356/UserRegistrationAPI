@@ -1,5 +1,6 @@
 
 using AuthECAPI.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -49,7 +50,16 @@ namespace AuthECAPI
 
             //With this, we will add the necessary services to the app and configured how we want to authenticate users in our application
             //and such logic will be executed by adding the UseAuthentication() in the middleware pipeline.
-            builder.Services.AddAuthentication();
+            builder.Services.AddAuthentication(x => 
+                    {
+                        //Passing Authentication Options to the AddAuthentication method
+                        x.DefaultAuthenticateScheme =
+                        x.DefaultChallengeScheme =
+                        x.DefaultScheme = JwtBearerDefaults.AuthenticationScheme; //This is responsible for setting the default authentication scheme to JWT Bearer in Identity API Core
+                    }).AddJwtBearer(y =>
+                    {
+                        y.SaveToken = false; //This is responsible for not saving the token in the HttpContext after a successful authentication in Identity API Core
+                    });
 
             var app = builder.Build();
 
