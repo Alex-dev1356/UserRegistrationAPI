@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
 using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Text;
 
 namespace AuthECAPI
@@ -141,6 +143,48 @@ namespace AuthECAPI
                 }
             });
 
+            //Adding the SignIn endpoint for Identity API Core to authenticate users and generate JWT tokens for them to access protected resources in the application.
+            app.MapPost("/api/signin", async(
+                    UserManager<AppUser> userManager, 
+                    [FromBody] UserLoginModel userLoginModel
+                ) =>
+            {
+                var user = await userManager.FindByEmailAsync(userLoginModel.Email); //With the help of UserManager, we will finr if there is a user with the given credentials in the database or not.
+                
+                //Making sure that there is a user with the given email address.
+                if(user != null && await userManager.CheckPasswordAsync(user, userLoginModel.Password)) //This method will check if the password provided in the request body matches the password of the user found in the database.
+                {   // Generate JWT token
+                    var signInKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes
+                                            (
+                                                builder.Configuration["AppSettings:SignInKey"]!
+                                            )
+                                        );
+
+                    //Creating Claims or Payload for the JWT token
+                    var tokenDescriptor = new SecurityTokenDescriptor
+                    {
+                        Subject = new System.Security.Claims.ClaimsIdentity(new Claim[]
+                        {
+                            new Claim("UserID", user.Id.ToString())
+                        }),
+                        Expires = DateTime.UtcNow.AddMinutes(10), //Setting the expiration time for the token to 10 minutes
+                        SigningCredentials = new SigningCredentials(
+                            signInKey,
+                            SecurityAlgorithms.HmacSha256Signature //This is responsible for specifying the algorithm used to sign the token in Identity API Core
+                            )
+                    };
+
+                    var tokenHandler = new JwtSecurityTokenHandler(); //This is responsible for creating and validating JWT tokens in Identity API Core
+                    var securityToken = tokenHandler.CreateToken(tokenDescriptor); //This is responsible for creating a new JWT token using the token descriptor defined above in Identity API Core
+                    var token = tokenHandler.WriteToken(securityToken); //This is responsible for writing the JWT token to a string format that can be returned to the client in Identity API Core)
+                    return Results.Ok(new { token }); //This is responsible for returning the JWT token to the client along with the user ID and full name of the user in Identity API Core
+                                                      //The client can then use this token to access protected resources in the application by including it in the Authorization header of the requests.
+                }
+                else
+                {
+                    return Results.BadRequest(new {message = "Username or Password is incorrect."});
+                }
+            });
 
             app.Run();
         
