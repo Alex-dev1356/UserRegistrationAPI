@@ -167,7 +167,7 @@ namespace AuthECAPI
                         {
                             new Claim("UserID", user.Id.ToString())
                         }),
-                        Expires = DateTime.UtcNow.AddMinutes(10), //Setting the expiration time for the token to 10 minutes
+                        Expires = DateTime.UtcNow.AddDays(10), //Setting the expiration time for the token to 10 days
                         SigningCredentials = new SigningCredentials(
                             signInKey,
                             SecurityAlgorithms.HmacSha256Signature //This is responsible for specifying the algorithm used to sign the token in Identity API Core
