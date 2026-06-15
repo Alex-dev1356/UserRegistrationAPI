@@ -156,7 +156,7 @@ namespace AuthECAPI
                 {   // Generate JWT token
                     var signInKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes
                                             (
-                                                builder.Configuration["AppSettings:SignInKey"]!
+                                                builder.Configuration["AppSettings:JWTSecret"]!
                                             )
                                         );
 
