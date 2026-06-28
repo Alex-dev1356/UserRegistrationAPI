@@ -1,4 +1,7 @@
-﻿namespace AuthECAPI.Extensions
+﻿using AuthECAPI.Models;
+using Microsoft.EntityFrameworkCore;
+
+namespace AuthECAPI.Extensions
 {
     public static class AppConfigCORSExtensions
     {
@@ -10,6 +13,13 @@
                 .AllowAnyMethod()
                 .AllowAnyHeader());
             return app;
+        }
+
+        public static IServiceCollection AddAppSettingsConfig(this IServiceCollection services,
+                                                         IConfiguration config)
+        {
+            services.Configure<AppSettings>(config.GetSection("AppSettings"));
+            return services;
         }
     }
 }

@@ -123,9 +123,18 @@ namespace AuthECAPI
             //===================================================================================================
 
 
+            //===================================================================================================
+            // <--Old Code-->
+            #region AppSettings Instance
             //Defining the AppSettings class to hold the configuration values from the appsettings.json file
-            builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings")); //This is responsible for binding the AppSettings section of the appsettings.json file to the AppSettings class in Identity API Core
+            //builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings")); //This is responsible for binding the AppSettings section of the appsettings.json file to the AppSettings class in Identity API Core
 
+            //Using the Extension Method for Adding AppSettings Configuration
+            builder.Services.AddAppSettingsConfig(builder.Configuration);
+            #endregion
+
+
+            //===================================================================================================
 
             var app = builder.Build();
             //===================================================================================================
