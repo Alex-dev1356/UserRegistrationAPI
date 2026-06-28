@@ -24,8 +24,8 @@ namespace AuthECAPI.Controllers
         }
 
         //Defining the CreateUser method that will be responsible for creating a new user in the database and returning the result of the operation to the client.
-        public static async Task<IResult> CreateUser(
-                UserManager<AppUser> userManager, //This is responsible for managing the users in Identity API Core
+        private static async Task<IResult> CreateUser(
+                [FromServices] UserManager<AppUser> userManager, //This is responsible for managing the users in Identity API Core, Added [FromServices] attribute to indicate that this parameter should be resolved from the dependency injection container.
                 [FromBody] UserRegistrationModel userRegistrationModel //This is responsible for binding the data from the request body to the UserRegistrationModel class
                 )
         {
@@ -56,8 +56,8 @@ namespace AuthECAPI.Controllers
         }
 
 
-        public static async Task<IResult> Signin(
-                UserManager<AppUser> userManager,
+        private static async Task<IResult> Signin(
+                [FromServices] UserManager<AppUser> userManager, //Added [FromServices] attribute to indicate that this parameter should be resolved from the dependency injection container.
                 [FromBody] UserLoginModel userLoginModel,
                 IOptions<AppSettings> appSettings)
         {
