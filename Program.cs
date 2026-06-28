@@ -1,4 +1,5 @@
 
+using AuthECAPI.Extensions;
 using AuthECAPI.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -19,86 +20,155 @@ namespace AuthECAPI
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-
             builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
 
+
+            //===================================================================================================
+            //Adding Extension Method for Adding Swagger/OpenAPI Services
+            #region AddSwaggerExplorer
+            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+            //builder.Services.AddEndpointsApiExplorer();
+            //builder.Services.AddSwaggerGen();
+            #endregion
+
+            //New Code Using Extension Method for Adding Swagger/OpenAPI Services
+            builder.Services.AddSwaggerExplorer();
+            //===================================================================================================
+
+
+            //===================================================================================================
+            //Adding the database context to the services container
+            //<--Old Code-->
+            #region AddDbContext
+            //builder.Services.AddDbContext<ApplicationDbContext>(options =>
+            //    options.UseSqlServer(builder.Configuration.GetConnectionString("DevDB")));
+            #endregion
+
+            //New Code Using Extension Method for Adding Database Context
+            builder.Services.InjectDBContext(builder.Configuration);
+            //===================================================================================================
+
+
+            //===================================================================================================
             //Adding Services from Identity Core
             //For Identity Manager
-            builder.Services
-                .AddIdentityApiEndpoints<AppUser>()//This is responsible for adding the endpoints for Identity API Core
-                                                        //The IdentityUser is the default user class provided by ASP.NET Core Identity.
-                                                        //It includes properties like UserName, Email, PasswordHash, etc.
-                                                        //You can also create a custom user class that inherits from IdentityUser
-                                                        //if you need to add additional properties specific to your application.
-            .AddEntityFrameworkStores<ApplicationDbContext>(); //This is responsible for adding the stores for Identity API Core
-                                                               //The ApplicationDbContext is the database context that will be used to store the identity data.
-                                                               //You need to create this class and configure it to use your database provider (e.g., SQL Server, SQLite, etc.)
-                                                               //It should inherit from IdentityDbContext<IdentityUser> or a custom user class if you created one.
+            //<--Old Code-->
+            #region AddCascadingAuthenticationState
+            //builder.Services
+            //    .AddIdentityApiEndpoints<AppUser>()//This is responsible for adding the endpoints for Identity API Core
+            //                                            //The IdentityUser is the default user class provided by ASP.NET Core Identity.
+            //                                            //It includes properties like UserName, Email, PasswordHash, etc.
+            //                                            //You can also create a custom user class that inherits from IdentityUser
+            //                                            //if you need to add additional properties specific to your application.
+            //.AddEntityFrameworkStores<ApplicationDbContext>(); //This is responsible for adding the stores for Identity API Core
+            //                                                   //The ApplicationDbContext is the database context that will be used to store the identity data.
+            //                                                   //You need to create this class and configure it to use your database provider (e.g., SQL Server, SQLite, etc.)
+            //                                                   //It should inherit from IdentityDbContext<IdentityUser> or a custom user class if you created one.
+            #endregion
 
+            //New Code Using Extension Method for Identity Handlers and Corresponding Entity Framework Stores
+            builder.Services.AddCascadingAuthenticationState();
+            //===================================================================================================
+
+
+            //===================================================================================================
             //This is responsible for configuring different options for Identity API Core
-            builder.Services.Configure<IdentityOptions>(options => 
-                {
-                    options.Password.RequireDigit = false; //This is responsible for making sure that the password does not require a digit in Identity API Core
-                    options.Password.RequireLowercase = false; //This is responsible for making sure that the password does not require a lowercase letter in Identity API Core
-                    options.Password.RequireUppercase = false; //This is responsible for making sure that the password does not require an uppercase letter in Identity API Core
-                    options.Password.RequireNonAlphanumeric = false; //This is responsible for making sure that the password does not require a non-alphanumeric character in Identity API Core
-                    options.User.RequireUniqueEmail = true; //This is responsible for making sure that each user has a unique email address in Identity API Core
-                });
+            //<--Old Code-->
+            #region ConfigureIdentityOptions
+            //builder.Services.Configure<IdentityOptions>(options => 
+            //    {
+            //        options.Password.RequireDigit = false; //This is responsible for making sure that the password does not require a digit in Identity API Core
+            //        options.Password.RequireLowercase = false; //This is responsible for making sure that the password does not require a lowercase letter in Identity API Core
+            //        options.Password.RequireUppercase = false; //This is responsible for making sure that the password does not require an uppercase letter in Identity API Core
+            //        options.Password.RequireNonAlphanumeric = false; //This is responsible for making sure that the password does not require a non-alphanumeric character in Identity API Core
+            //        options.User.RequireUniqueEmail = true; //This is responsible for making sure that each user has a unique email address in Identity API Core
+            //    });
+            #endregion 
 
-            //Adding the database context to the services container
-            builder.Services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("DevDB")));
+            //New Code Using Extension Method for Configuring Identity Options
+            builder.Services.ConfigureIdentityOptions();
+            //===================================================================================================
 
+
+            //===================================================================================================
             //With this, we will add the necessary services to the app and configured how we want to authenticate users in our application
             //and such logic will be executed by adding the UseAuthentication() in the middleware pipeline.
-            builder.Services.AddAuthentication(x => 
-                    {
-                        //Passing Authentication Options to the AddAuthentication method
-                        x.DefaultAuthenticateScheme =
-                        x.DefaultChallengeScheme =
-                        x.DefaultScheme = JwtBearerDefaults.AuthenticationScheme; //This is responsible for setting the default authentication scheme to JWT Bearer in Identity API Core
-                    }).AddJwtBearer(y =>
-                    {
-                        y.SaveToken = false; //This is responsible for not saving the token in the HttpContext after a successful authentication in Identity API Core
-                        y.TokenValidationParameters = new TokenValidationParameters
-                        { 
-                            ValidateIssuerSigningKey = true, //This is responsible for validating the signing key of the token in Identity API Core
-                            IssuerSigningKey = new SymmetricSecurityKey(
-                                Encoding.UTF8.GetBytes( //This is responsible for creating a new symmetric security key using the secret key defined in the appsettings.json file in Identity API Core
-                                    builder.Configuration["AppSettings:JWTSecret"]!) //This is responsible for getting the secret key from the appsettings.json file using the Configuration object in Identity API Core
-                                ) 
-                                    
-                        };
+            //<--Old Code-->
+            #region AddAuthentication
+            //builder.Services.AddAuthentication(x => 
+            //        {
+            //            //Passing Authentication Options to the AddAuthentication method
+            //            x.DefaultAuthenticateScheme =
+            //            x.DefaultChallengeScheme =
+            //            x.DefaultScheme = JwtBearerDefaults.AuthenticationScheme; //This is responsible for setting the default authentication scheme to JWT Bearer in Identity API Core
+            //        }).AddJwtBearer(y =>
+            //        {
+            //            y.SaveToken = false; //This is responsible for not saving the token in the HttpContext after a successful authentication in Identity API Core
+            //            y.TokenValidationParameters = new TokenValidationParameters
+            //            { 
+            //                ValidateIssuerSigningKey = true, //This is responsible for validating the signing key of the token in Identity API Core
+            //                IssuerSigningKey = new SymmetricSecurityKey(
+            //                    Encoding.UTF8.GetBytes( //This is responsible for creating a new symmetric security key using the secret key defined in the appsettings.json file in Identity API Core
+            //                        builder.Configuration["AppSettings:JWTSecret"]!) //This is responsible for getting the secret key from the appsettings.json file using the Configuration object in Identity API Core
+            //                    ) 
 
-                    });
+            //            };
+
+            //        });
+            #endregion
+
+            //New Code Using Extension Method for Adding Authentication and JWT Bearer Token Validation
+            builder.Services.AddIdentityAuth(builder.Configuration);
+            //===================================================================================================
+
+
 
             var app = builder.Build();
-
+            //===================================================================================================
             // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
+            //<--Old Code-->
+            #region Configure the HTTP request pipeline.
+            //if (app.Environment.IsDevelopment())
+            //{
+            //    app.UseSwagger();
+            //    app.UseSwaggerUI();
+            //}
+            #endregion
+
+            //New Code Using Extension Method for Adding Swagger/OpenAPI Middleware
+            app.ConfigureSwaggerExplorer();
+            //===================================================================================================
+
 
             app.UseHttpsRedirection();
 
+
+            //===================================================================================================
             //Adding the CORS policy to allow requests from the frontend application
             #region Config. CORS
-            app.UseCors(options => 
-                options.WithOrigins("http://localhost:4200")
-                .AllowAnyMethod()
-                .AllowAnyHeader());
+            //app.UseCors(options => 
+            //    options.WithOrigins("http://localhost:4200")
+            //    .AllowAnyMethod()
+            //    .AllowAnyHeader());
             #endregion
 
+            app.CORSConfig(builder.Configuration);//Adding extra parameter for IConfiguration to get the CORS settings from appsettings.json
+            //===================================================================================================
+
+
+            //===================================================================================================
             //This is responsible for adding the authentication middleware to the HTTP request pipeline.
             //It should be added before the authorization middleware.
-            app.UseAuthentication(); 
+            //<--Old Code-->
+            #region AddAuthentication and Authorization Middleware
+            //app.UseAuthentication(); 
 
-            app.UseAuthorization();
+            //app.UseAuthorization();
+            #endregion
+
+            app.AddIdentityAuthMiddlewares();
+            //===================================================================================================
+
 
             app.MapControllers();
 
