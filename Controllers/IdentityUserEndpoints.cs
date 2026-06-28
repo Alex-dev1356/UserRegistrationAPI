@@ -1,6 +1,7 @@
 ﻿using AuthECAPI.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -57,7 +58,8 @@ namespace AuthECAPI.Controllers
 
         public static async Task<IResult> Signin(
                 UserManager<AppUser> userManager,
-                [FromBody] UserLoginModel userLoginModel)
+                [FromBody] UserLoginModel userLoginModel,
+                IOptions<AppSettings> appSettings)
         {
             var user = await userManager.FindByEmailAsync(userLoginModel.Email); //With the help of UserManager, we will finr if there is a user with the given credentials in the database or not.
 
@@ -66,7 +68,8 @@ namespace AuthECAPI.Controllers
             {   // Generate JWT token
                 var signInKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes
                                         (
-                                            builder.Configuration["AppSettings:JWTSecret"]!
+                                            //builder.Configuration["AppSettings:JWTSecret"]!
+                                            appSettings.Value.JWTSecret
                                         )
                                     );
 

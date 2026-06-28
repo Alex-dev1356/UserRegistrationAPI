@@ -123,6 +123,9 @@ namespace AuthECAPI
             //===================================================================================================
 
 
+            //Defining the AppSettings class to hold the configuration values from the appsettings.json file
+            builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings")); //This is responsible for binding the AppSettings section of the appsettings.json file to the AppSettings class in Identity API Core
+
 
             var app = builder.Build();
             //===================================================================================================
