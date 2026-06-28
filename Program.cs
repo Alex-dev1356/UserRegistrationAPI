@@ -2,10 +2,12 @@
 using AuthECAPI.Controllers;
 using AuthECAPI.Extensions;
 using AuthECAPI.Models;
+using AuthECAPI.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Identity.Client;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -128,15 +130,21 @@ namespace AuthECAPI
             #region AppSettings Instance
             //Defining the AppSettings class to hold the configuration values from the appsettings.json file
             //builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings")); //This is responsible for binding the AppSettings section of the appsettings.json file to the AppSettings class in Identity API Core
-
+            #endregion
+            
             //Using the Extension Method for Adding AppSettings Configuration
             builder.Services.AddAppSettingsConfig(builder.Configuration);
-            #endregion
+            //===================================================================================================
 
 
             //===================================================================================================
+            //Registering the IEmailService interface and its implementation EmailService to the dependency injection container
+            builder.Services.AddTransient<IEmailSender<AppUser>, EmailSender>();
+            //===================================================================================================
+
 
             var app = builder.Build();
+
             //===================================================================================================
             // Configure the HTTP request pipeline.
             //<--Old Code-->
