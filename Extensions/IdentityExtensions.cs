@@ -37,13 +37,8 @@ namespace AuthECAPI.Extensions
         //Adding Extension Method for configuring JWT Authentication Options for Identity API Core
         public static IServiceCollection AddIdentityAuth(this IServiceCollection services, IConfiguration config)
         {
-            services.AddAuthentication(x =>
-            {
-                //Passing Authentication Options to the AddAuthentication method
-                x.DefaultAuthenticateScheme =
-                x.DefaultChallengeScheme =
-                x.DefaultScheme = JwtBearerDefaults.AuthenticationScheme; //This is responsible for setting the default authentication scheme to JWT Bearer in Identity API Core
-            }).AddJwtBearer(y =>
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme) //This is responsible for setting the default authentication scheme to JWT Bearer in Identity API Core
+                    .AddJwtBearer(y =>
             {
                 y.SaveToken = false; //This is responsible for not saving the token in the HttpContext after a successful authentication in Identity API Core
                 y.TokenValidationParameters = new TokenValidationParameters
@@ -52,10 +47,11 @@ namespace AuthECAPI.Extensions
                     IssuerSigningKey = new SymmetricSecurityKey(
                         Encoding.UTF8.GetBytes( //This is responsible for creating a new symmetric security key using the secret key defined in the appsettings.json file in Identity API Core
                             config["AppSettings:JWTSecret"]!) //This is responsible for getting the secret key from the appsettings.json file using the Configuration object in Identity API Core
-                        )
+                        ),
+                    ValidateIssuer = false, //This is responsible for not validating the issuer of the token in Identity API Core
+                    ValidateAudience = false, //This is responsible for not validating the audience of the token in Identity API Core
 
                 };
-
             });
             return services;
         }

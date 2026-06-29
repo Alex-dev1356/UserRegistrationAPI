@@ -284,7 +284,12 @@ namespace AuthECAPI
             //    }
             //});
             #endregion
+            //===================================================================================================
 
+            //===================================================================================================
+            //Invoking the MapAccountEndpoints extension method to map the endpoints for Identity API Core
+            app.MapAccountEndpoints(builder.Configuration);
+            //===================================================================================================
 
 
             app.Run();
