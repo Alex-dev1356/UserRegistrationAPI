@@ -70,7 +70,7 @@ namespace AuthECAPI
             #endregion
 
             //New Code Using Extension Method for Identity Handlers and Corresponding Entity Framework Stores
-            builder.Services.AddCascadingAuthenticationState();
+            builder.Services.AddIdentityHandlersAndStores();
             //===================================================================================================
 
 
