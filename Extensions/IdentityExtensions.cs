@@ -55,6 +55,7 @@ namespace AuthECAPI.Extensions
                 };
             });
 
+            //Adding Authorization Policy to require authenticated users for all endpoints in Identity API Core
             services.AddAuthorization(options =>
             {
                 options.FallbackPolicy = new AuthorizationPolicyBuilder()
