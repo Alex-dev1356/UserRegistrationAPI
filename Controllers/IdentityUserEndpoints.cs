@@ -1,4 +1,5 @@
 ﻿using AuthECAPI.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -23,6 +24,7 @@ namespace AuthECAPI.Controllers
             return app;
         }
 
+        [AllowAnonymous] //This attribute is used to allow anonymous access to the CreateUser method, which means that users can create an account without being authenticated. This is important because we want to allow new users to register without requiring them to log in first.
         //Defining the CreateUser method that will be responsible for creating a new user in the database and returning the result of the operation to the client.
         private static async Task<IResult> CreateUser(
                 [FromServices] UserManager<AppUser> userManager, //This is responsible for managing the users in Identity API Core, Added [FromServices] attribute to indicate that this parameter should be resolved from the dependency injection container.
@@ -55,7 +57,7 @@ namespace AuthECAPI.Controllers
             }
         }
 
-
+        [AllowAnonymous] //This attribute is used to allow anonymous access to the CreateUser method, which means that users can create an account without being authenticated. This is important because we want to allow new users to register without requiring them to log in first.
         private static async Task<IResult> Signin(
                 [FromServices] UserManager<AppUser> userManager, //Added [FromServices] attribute to indicate that this parameter should be resolved from the dependency injection container.
                 [FromBody] UserLoginModel userLoginModel,
