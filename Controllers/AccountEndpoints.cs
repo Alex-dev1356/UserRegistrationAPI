@@ -1,4 +1,8 @@
-﻿namespace AuthECAPI.Controllers
+﻿using AuthECAPI.Models;
+using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
+
+namespace AuthECAPI.Controllers
 {
     public static class AccountEndpoints
     {
@@ -11,9 +15,21 @@
             return app;
         }
 
-        private static string GetUserProfile()
+        private static async Task<IResult> GetUserProfile(ClaimsPrincipal user, //This method is responsible for retrieving the user profile information of the authenticated user. The ClaimsPrincipal parameter represents the current authenticated user and contains their claims, which can be used to retrieve their information.
+            UserManager<AppUser> userManager) 
         {
-            return "User Profile";
+            string userID = user.Claims.First(x => x.Type == "UserID").Value;
+            var userDetails =await userManager.FindByIdAsync(userID);
+
+            //return "User Profile";
+
+            return Results.Ok(
+                new 
+                { 
+                    Email = userDetails?.Email,
+                    FullName = userDetails?.FullName,
+                });
+
         }
     }
 }
