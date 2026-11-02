@@ -15,6 +15,7 @@ namespace AuthECAPI.Extensions
         public static IServiceCollection AddIdentityHandlersAndStores(this IServiceCollection services) //Here we use the 'this' keyword to indicate that this is an extension method for the IServiceCollection interface.
         {
             services.AddIdentityApiEndpoints<AppUser>()
+                    .AddRoles<IdentityRole>() //This is responsible for adding the RoleManager and RoleStore services to the Identity API Core, which are used for managing roles in the application.
                     .AddEntityFrameworkStores<ApplicationDbContext>();
             return services;
         }

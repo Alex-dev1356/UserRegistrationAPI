@@ -36,7 +36,10 @@ namespace AuthECAPI.Controllers
             {
                 UserName = userRegistrationModel.Email, //Setting the UserName property to the email address of the user
                 Email = userRegistrationModel.Email,
-                FullName = userRegistrationModel.FullName
+                FullName = userRegistrationModel.FullName,
+                Gender = userRegistrationModel.Gender,
+                DOB = DateOnly.FromDateTime(DateTime.Now.AddYears(-userRegistrationModel.Age)), //Calculating the date of birth based on the age provided by the user
+                LibraryID = userRegistrationModel.LibraryID?.ToString() //Converting the LibraryID to string and assigning it to the LibraryID property of the user object
             };
             //The UserManager class provides various methods for managing users, such as creating, updating, deleting, etc.
             var result = await userManager.CreateAsync(
@@ -45,6 +48,8 @@ namespace AuthECAPI.Controllers
                                                  //The CreateAsync method takes the user object and the password as parameters and creates a new user in the database.
                                                  //It returns a Task<IdentityResult> which indicates whether the operation was successful or not.
                                                  //You can also handle the result of the operation to return appropriate responses to the client.
+
+            await userManager.AddToRoleAsync(user, userRegistrationModel.Role); //This is responsible for adding the user to the specified role in Identity API Core
 
             //returning the result of the operation to the client
             if (result.Succeeded)
