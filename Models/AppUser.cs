@@ -10,5 +10,16 @@ namespace AuthECAPI.Models
         [Column(TypeName = "nvarchar(150)")]
         public string FullName { get; set; } = string.Empty; //Adding the FullName property to the AppUser class.
                                                              //This property will store the full name of the user and is required (not nullable).
+
+        //Adding the data type for Gender, DOB and LibraryID
+        [PersonalData]
+        public string Gender { get; set; } = string.Empty;
+
+        [PersonalData]
+        public DateOnly DOB { get; set; } = DateOnly.MinValue;
+
+        [PersonalData]
+        public string LibraryID { get; set; } = string.Empty;
+
     }
 }
